@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARASH</title>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@100;200;300&family=Cinzel:wght@400;700&family=Cormorant+Infant:ital,wght@1,300;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#050505;
+  --white:#e8e4de;
+  --dim:#3a3630;
+  --faint:#1c1a18;
+  --accent:#c8bfa8;
+  --gold:#b89c6e;
+}
+html,body{width:100%;height:100%;background:var(--bg);overflow:hidden;cursor:none;}
+
+.cursor{position:fixed;width:5px;height:5px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;}
+.cursor-ring{position:fixed;width:30px;height:30px;border:1px solid rgba(200,191,168,0.25);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:transform 0.38s cubic-bezier(0.16,1,0.3,1);}
+
+.bar-top,.bar-bottom{position:fixed;left:0;right:0;height:80px;background:var(--bg);z-index:100;transition:transform 1.6s cubic-bezier(0.76,0,0.24,1);}
+.bar-top{top:0;transform-origin:top;}
+.bar-bottom{bottom:0;transform-origin:bottom;}
+
+.grain{position:fixed;inset:0;pointer-events:none;z-index:200;opacity:0.042;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");background-size:300px 300px;animation:gs 0.5s steps(2) infinite;}
+@keyframes gs{0%{background-position:0 0;}25%{background-position:-50px 30px;}50%{background-position:30px -20px;}75%{background-position:-20px 50px;}100%{background-position:10px -30px;}}
+
+.vignette{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 30%,rgba(0,0,0,0.94) 100%);pointer-events:none;z-index:50;}
+.scanline{position:fixed;left:0;right:0;height:1px;background:rgba(200,191,168,0.025);pointer-events:none;z-index:60;animation:scan 9s linear infinite;opacity:0;}
+@keyframes scan{0%{top:-1px;opacity:0;}5%{opacity:1;}95%{opacity:0.4;}100%{top:100%;opacity:0;}}
+.light{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:560px;height:340px;background:radial-gradient(ellipse,rgba(184,156,110,0.05) 0%,transparent 70%);pointer-events:none;z-index:8;animation:breathe 7s ease-in-out infinite;}
+@keyframes breathe{0%,100%{opacity:0.5;transform:translate(-50%,-50%) scale(1);}50%{opacity:1;transform:translate(-50%,-50%) scale(1.1);}}
+
+.stage{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;}
+
+.logo-wrap{
+  opacity:0;
+  animation:logo-reveal 2s cubic-bezier(0.16,1,0.3,1) forwards;
+  animation-delay:1.2s;
+  display:flex;flex-direction:column;align-items:center;
+}
+@keyframes logo-reveal{
+  0%{opacity:0;filter:blur(18px);transform:scale(1.05);}
+  100%{opacity:1;filter:blur(0);transform:scale(1);}
+}
+.logo-svg{width:clamp(300px,46vw,540px);height:auto;display:block;}
+
+.quote{
+  margin-top:40px;text-align:center;opacity:0;
+  animation:fade-up 1.4s cubic-bezier(0.16,1,0.3,1) forwards;
+  animation-delay:2s;
+}
+.q1{
+  font-family:'Cormorant Infant',Georgia,serif;
+  font-style:italic;font-weight:300;
+  font-size:clamp(16px,1.7vw,22px);
+  letter-spacing:0.03em;
+  color:rgba(200,191,168,0.35);
+  display:block;margin-bottom:12px;
+}
+.q2{
+  font-family:'Cinzel',serif;font-weight:400;
+  font-size:clamp(9px,0.85vw,11px);
+  letter-spacing:0.55em;text-indent:0.55em;
+  text-transform:uppercase;color:var(--gold);
+  display:block;
+}
+
+.domain{position:fixed;bottom:92px;left:50%;transform:translateX(-50%);font-family:'Jost',sans-serif;font-weight:100;font-size:8px;letter-spacing:0.5em;text-indent:0.5em;text-transform:uppercase;color:var(--faint);z-index:110;opacity:0;animation:fade-up 1.4s ease forwards;animation-delay:2.8s;white-space:nowrap;}
+.year{position:fixed;top:92px;right:48px;font-family:'Jost',sans-serif;font-weight:100;font-size:9px;letter-spacing:0.35em;color:var(--faint);z-index:110;opacity:0;animation:fade-in 1.4s ease forwards;animation-delay:2.6s;}
+.index{position:fixed;top:92px;left:48px;font-family:'Jost',sans-serif;font-weight:100;font-size:9px;letter-spacing:0.35em;color:var(--faint);z-index:110;opacity:0;animation:fade-in 1.4s ease forwards;animation-delay:2.6s;}
+.side-text{position:fixed;bottom:120px;left:48px;font-family:'Jost',sans-serif;font-weight:100;font-size:8px;letter-spacing:0.4em;text-transform:uppercase;color:var(--faint);z-index:110;writing-mode:vertical-rl;transform:rotate(180deg);opacity:0;animation:fade-in 1.4s ease forwards;animation-delay:3s;}
+
+@keyframes fade-up{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fade-in{from{opacity:0;}to{opacity:1;}}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="ring"></div>
+<div class="grain"></div>
+<div class="vignette"></div>
+<div class="scanline"></div>
+<div class="light"></div>
+<div class="bar-top"></div>
+<div class="bar-bottom"></div>
+
+<div class="stage">
+
+  <div class="logo-wrap">
+    <svg class="logo-svg" viewBox="0 0 540 190" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gH" x1="0" y1="0" x2="540" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"   stop-color="#3a2c0e"/>
+          <stop offset="20%"  stop-color="#b89c6e"/>
+          <stop offset="50%"  stop-color="#ead8a8"/>
+          <stop offset="80%"  stop-color="#b89c6e"/>
+          <stop offset="100%" stop-color="#3a2c0e"/>
+        </linearGradient>
+        <linearGradient id="gV" x1="0" y1="0" x2="0" y2="190" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"   stop-color="#ead8a8"/>
+          <stop offset="60%"  stop-color="#b89c6e"/>
+          <stop offset="100%" stop-color="#3a2c0e"/>
+        </linearGradient>
+        <linearGradient id="gFade" x1="0" y1="0" x2="540" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"   stop-color="transparent"/>
+          <stop offset="25%"  stop-color="#4a3a18"/>
+          <stop offset="50%"  stop-color="#7a6030"/>
+          <stop offset="75%"  stop-color="#4a3a18"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Top rule + diamond -->
+      <line x1="50" y1="14" x2="490" y2="14" stroke="url(#gFade)" stroke-width="0.5"/>
+      <polygon points="270,5 275,13 270,21 265,13" fill="#b89c6e" opacity="0.65"/>
+
+      <!-- ══ A ══ -->
+      <line x1="18"  y1="158" x2="72"  y2="30" stroke="url(#gV)" stroke-width="2" stroke-linecap="round"/>
+      <line x1="126" y1="158" x2="72"  y2="30" stroke="url(#gV)" stroke-width="2" stroke-linecap="round"/>
+      <line x1="40"  y1="116" x2="104" y2="116" stroke="url(#gH)" stroke-width="1.3" stroke-linecap="round"/>
+      <line x1="4"   y1="158" x2="32"  y2="158" stroke="url(#gH)" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="112" y1="158" x2="140" y2="158" stroke="url(#gH)" stroke-width="1.5" stroke-linecap="round"/>
+      <circle cx="72" cy="27" r="2.2" fill="#ead8a8"/>
+
+      <!-- ══ R ══ -->
+      <line x1="165" y1="30" x2="165" y2="158" stroke="url(#gV)" stroke-width="2" stroke-linecap="round"/>
+      <line x1="153" y1="30"  x2="177" y2="30"  stroke="url(#gH)" stroke-width="1.3" stroke-linecap="round"/>
+      <line x1="153" y1="158" x2="177" y2="158" stroke="url(#gH)" stroke-width="1.3" stroke-linecap="round"/>
+      <path d="M165 30 Q222 30 222 70 Q222 110 165 110" stroke="url(#gH)" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <line x1="186" y1="110" x2="228" y2="158" stroke="url(#gV)" stroke-width="2" stroke-linecap="round"/>
+      <line x1="216" y1="158" x2="240" y2="158" stroke="url(#gH)" stroke-width="1.3" stroke-linecap="round"/>
+
+      <!-- ══ A (2) ══ -->
+      <line x1="262" y1="158" x2="316" y2="30" stroke="url(#gV)" stroke-width="2" stroke-linecap="round"/>
+      <line x1="370" y1="158" x2="316" y2="30" stroke="url(#gV)" stroke-width="2" stroke-linecap="round"/>
+      <line x1="284" y1="116" x2="348" y2="116" stroke="url(#gH)" stroke-width="1.3" stroke-linecap="round"/>
+      <line x1="248" y1="158" x2="276" y2="158" stroke="url(#gH)" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="356" y1="158" x2="384" y2="158" stroke="url(#gH)" stroke-width="1.5" stroke-linecap="round"/>
+      <circle cx="316" cy="27" r="2.2" fill="#ead8a8"/>
+
+      <!-- ══ S ══ -->
+      <path d="M444 56 Q444 30 420 30 Q396 30 396 56 Q396 78 422 94 Q448 110 448 136 Q448 158 422 158 Q396 158 396 136"
+            stroke="url(#gV)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="430" y1="30"  x2="452" y2="30"  stroke="url(#gH)" stroke-width="1.3" stroke-linecap="round"/>
+      <line x1="384" y1="158" x2="408" y2="158" stroke="url(#gH)" stroke-width="1.3" stroke-linecap="round"/>
+
+      <!-- ══ H ══ -->
+      <line x1="466" y1="30"  x2="466" y2="158" stroke="url(#gV)" stroke-width="2" stroke-linecap="round"/>
+      <line x1="510" y1="30"  x2="510" y2="158" stroke="url(#gV)" stroke-width="2" stroke-linecap="round"/>
+      <line x1="466" y1="94"  x2="510" y2="94"  stroke="url(#gH)" stroke-width="1.3" stroke-linecap="round"/>
+      <line x1="454" y1="30"  x2="478" y2="30"  stroke="url(#gH)" stroke-width="1.3" stroke-linecap="round"/>
+      <line x1="498" y1="30"  x2="522" y2="30"  stroke="url(#gH)" stroke-width="1.3" stroke-linecap="round"/>
+      <line x1="454" y1="158" x2="478" y2="158" stroke="url(#gH)" stroke-width="1.3" stroke-linecap="round"/>
+      <line x1="498" y1="158" x2="522" y2="158" stroke="url(#gH)" stroke-width="1.3" stroke-linecap="round"/>
+
+      <!-- Bottom rule -->
+      <line x1="50" y1="174" x2="490" y2="174" stroke="url(#gFade)" stroke-width="0.5"/>
+      <polygon points="270,168 274,175 270,182 266,175" fill="#3a2c0e" opacity="0.55"/>
+    </svg>
+  </div>
+
+  <div class="quote">
+    <span class="q1">You've seen my descent —</span>
+    <span class="q2">Now watch my rise</span>
+  </div>
+
+</div>
+
+<span class="domain">arashofficial.com</span>
+<span class="year">MMXXVI</span>
+<span class="index">001</span>
+<span class="side-text">Personal · Identity</span>
+
+<script>
+const cur=document.getElementById('cur');
+const ring=document.getElementById('ring');
+let mx=window.innerWidth/2,my=window.innerHeight/2,rx=mx,ry=my;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function a(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(a);})();
+setTimeout(()=>{
+  document.querySelector('.bar-top').style.transform='scaleY(0)';
+  document.querySelector('.bar-bottom').style.transform='scaleY(0)';
+},400);
+</script>
+</body>
+</html>
